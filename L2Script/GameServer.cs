@@ -9,6 +9,7 @@ using L2Script.Library.Networking;
 using L2Script.Library.Encryption;
 using L2Script.Packets.Game;
 using L2Script.Packets;
+using System.Threading;
 /*C - 8bit integer (00)
 H - 16bit integer (00 00)
 D - 32bit integer (00 00 00 00)
@@ -33,12 +34,14 @@ namespace L2Script
         public Config UserConfig;
         public GameData gameData;
         public Plugin[] Plugins;
-
-        public GameServer(ref Config uc, ref GameData gd, ref Plugin[] plugs)
+        public ExtensionHandler extensions;
+        
+        public GameServer(ref Config uc, ref GameData gd, ref Plugin[] plugs, ref ExtensionHandler ext)
         {
             UserConfig = uc;
             gameData = gd;
             Plugins = plugs;
+            extensions = ext;
         }
 
         public void StartConnect()
@@ -58,6 +61,23 @@ namespace L2Script
 
             byte[] PVPacket = General.Hex("0B 01 0E 98 00 00 00 09 07 54 56 03 09 0B 01 07 02 54 54 56 07 00 02 55 56 00 51 00 53 57 04 07 55 08 54 01 07 01 53 00 56 55 56 01 06 05 04 51 03 08 51 08 51 56 04 54 06 55 08 02 09 51 56 01 53 06 55 04 53 00 56 56 53 01 09 02 09 01 51 54 51 09 55 56 09 03 04 07 05 55 04 06 55 04 06 09 04 51 01 08 08 06 05 52 06 04 01 07 54 03 06 52 55 06 55 55 51 01 02 04 54 03 55 54 01 57 51 55 05 52 05 54 07 51 51 55 07 02 53 53 00 52 05 52 07 01 54 00 03 05 05 08 06 05 05 06 03 00 0D 08 01 07 09 03 51 03 07 53 09 51 06 07 54 0A 50 56 02 52 04 05 55 51 02 53 00 08 54 04 52 56 06 02 09 00 08 03 53 56 01 05 00 55 06 08 56 04 0D 06 07 52 06 07 04 0A 06 01 04 54 04 00 05 02 04 54 00 09 52 53 05 04 01 04 05 05 01 52 51 52 0D 06 51 08 09 54 53 00 0D 01 02 03 54 53 01 05 03 08 56 54 07 02 54 0B 06 A6 23 F4 FE");
             Send(PVPacket);
+
+            Thread sendThread = new Thread(new ThreadStart(sendTask));
+            sendThread.Start();
+        }
+
+        public void sendTask()
+        {
+            while (Connected)
+            {
+                if (gameData.commands.outBuffer.Count > 0)
+                {
+                    byte[][] toSend = gameData.commands.outBuffer.ToArray();
+                    gameData.commands.outBuffer.Clear();
+                    for (int i = 0; i < toSend.Length; i++)
+                        Send(toSend[i]);
+                }
+            }
         }
 
         public override void DataReceived(ref byte[] inputPacket)
@@ -142,34 +162,60 @@ namespace L2Script
                 packet.Decrypt();
                 PacketList.Server opcode = (PacketList.Server)packet.readB();
 
+                if (opcode == PacketList.Server.DummyPacket)
+                {
+                    opcode = (PacketList.Server)BitConverter.ToUInt16(new byte[] {(byte)opcode, packet.readB()}, 0);
+                }
 
                 switch (opcode)
                 {
                     case PacketList.Server.CharacterSelectionInfo:
-                        Debug.Information("Selecting the character specified in the config.");
-                        GameWriter pw = new GameWriter(gameData);
-                        pw.writeB(PacketList.Client.CharacterSelect);
-                        pw.writeD(Int32.Parse(UserConfig.Toon) - 1);
-                        pw.writeB(General.Hex("00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
-                        pw.Encrypt();
-                        Send(pw.Finalize());
+                        if (!CallPlugin_HandlePacket(opcode, packet))
+                        {
+                            Debug.Information("Selecting the character specified in the config.");
+                            GameWriter pw = new GameWriter(gameData);
+                            pw.writeB(PacketList.Client.CharacterSelect);
+                            pw.writeD(Int32.Parse(UserConfig.Toon) - 1);
+                            pw.writeB(General.Hex("00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
+                            pw.Encrypt();
+                            Send(pw.Finalize());
+                        }
+                        else
+                        {
+                            Debug.Information("The 'CharacterSelectionInfo' packet was overridden by a plugin.");
+                        }
                         break;
                     case PacketList.Server.CharacterSelectedPacket:
-                        byte[] EnterWorldPacket = General.Hex(PacketList.EnterWorld);
-                        GameWriter gw = new GameWriter(EnterWorldPacket, gameData);
-                        gw.Encrypt();
-                        Send(gw.Finalize());
-                        Debug.Information("Character selected, entering world...");
+                        if (!CallPlugin_HandlePacket(opcode, packet))
+                        {
+                            byte[] EnterWorldPacket = General.Hex(PacketList.EnterWorld);
+                            GameWriter gw = new GameWriter(EnterWorldPacket, gameData);
+                            gw.Encrypt();
+                            Send(gw.Finalize());
+                            Debug.Information("Character selected, entering world...");
+                            CallPlugin_HandlePacket(opcode, packet);
+                        }
+                        else
+                        {
+                            Debug.Information("The 'CharacterSelectedPacket' packet was overridden by a plugin.");
+                        }
                         break;
                     default:
-                        bool Handled = false;
-                        for (int i = 0; i < Plugins.Length; i++)
-                        {
-                            Handled = Plugins[i].HandlePacket(opcode, packet, gameData, Handled);
-                        }
+                        CallPlugin_HandlePacket(opcode, packet);
                         break;
                 }
             }
+        }
+
+        public bool CallPlugin_HandlePacket(PacketList.Server opcode, GameReader packet)
+        {
+            bool SimpleHandled = false;
+            for (int i = 0; i < Plugins.Length; i++)
+            {
+                if (Plugins[i].HandlePacket(opcode, packet, gameData, SimpleHandled, extensions))
+                    SimpleHandled = true;
+            }
+            return SimpleHandled;
         }
     }
 }

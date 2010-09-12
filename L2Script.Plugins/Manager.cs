@@ -36,12 +36,21 @@ namespace L2Script.Plugins
                     Assembly assembly = Assembly.LoadFrom(path + "\\plugins\\" + pluginName + ".dll");
                     Type[] t = assembly.GetTypes();
 
-                    Plugin plugin = (Plugin)Activator.CreateInstance(t[0]);
-                    PluginStack.Push(plugin);
+                    for (int z = 0; z < t.Length; z++)
+                    {
+                        Plugin plugin;
+                        if (t[z].GetInterface(typeof(Plugin).FullName) == typeof(Plugin))
+                        {
+                            plugin = (Plugin)Activator.CreateInstance(t[z]);
+                            Debug.Information(" - Loaded plugin '" + plugin.GetInfo().ShortName + "'.");
+                            PluginStack.Push(plugin);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Debug.Exception(" - Error Loading Plugin", ex);
+                    string pluginName = plugins[i].Substring(plugins[i].LastIndexOf('\\') + 1);
+                    Debug.Exception(" - Error Loading Plugin '" + pluginName + "'", ex);
                 }
             }
             return PluginStack.ToArray();

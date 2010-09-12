@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2Script.Library", "L2Scrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2Script.Packets", "L2Script.Packets\L2Script.Packets.csproj", "{DCB0623F-C680-4502-848B-5D564367EE94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L2Script.Plugins.R4Toolkit", "L2Script.Plugins.R4Toolkit\L2Script.Plugins.R4Toolkit.csproj", "{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,16 @@ Global
 		{DCB0623F-C680-4502-848B-5D564367EE94}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DCB0623F-C680-4502-848B-5D564367EE94}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DCB0623F-C680-4502-848B-5D564367EE94}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

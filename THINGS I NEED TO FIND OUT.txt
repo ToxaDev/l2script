@@ -1,0 +1,14 @@
+Rest of these enums:
+        public enum ChatType : byte
+        {
+            Party = 0x00,
+            GM = 0x00,
+            Petition = 0x00,
+            PetitionReply =0x00,
+            Ally = 0x00,
+            Announcement =0x00,
+            Boat = 0x00,
+            PartyRoom = 0x00,
+            PartyCommander =0x00,
+            Hero = 0x00,
+        }

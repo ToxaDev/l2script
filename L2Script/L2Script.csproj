@@ -57,6 +57,10 @@
       <Project>{DCB0623F-C680-4502-848B-5D564367EE94}</Project>
       <Name>L2Script.Packets</Name>
     </ProjectReference>
+    <ProjectReference Include="..\L2Script.Plugins.R4Toolkit\L2Script.Plugins.R4Toolkit.csproj">
+      <Project>{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}</Project>
+      <Name>L2Script.Plugins.R4Toolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\L2Script.Plugins\L2Script.Plugins.csproj">
       <Project>{91962E2D-1466-4EBC-8534-5316F77DE1EA}</Project>
       <Name>L2Script.Plugins</Name>
@@ -66,6 +70,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)L2Script.Plugins.R4Toolkit.dll" "$(TargetDir)plugins\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

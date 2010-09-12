@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using L2Script.Library.Encryption;
+using L2Script.Plugins;
 
 namespace L2Script.Library
 {
@@ -16,5 +17,7 @@ namespace L2Script.Library
 
         public GameCrypt CryptIn;
         public GameCrypt CryptOut;
+
+        public Commands commands;
     }
 }

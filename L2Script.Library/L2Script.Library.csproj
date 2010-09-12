@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="L2Script.Plugins">
+      <HintPath>..\L2Script.Plugins\bin\Debug\L2Script.Plugins.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,13 +46,17 @@
   <ItemGroup>
     <Compile Include="ByteHelper.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="DataClasses\Character.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
     <Compile Include="Encryption\GameCrypt.cs" />
     <Compile Include="Encryption\LoginCrypt.cs" />
     <Compile Include="Encryption\RSA.cs" />
+    <Compile Include="ENums.cs" />
+    <Compile Include="ExtensionHandler.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="General.cs" />
+    <Compile Include="Extension.cs" />
     <Compile Include="Mono\BigInteger.cs" />
     <Compile Include="Mono\ConfidenceFactor.cs" />
     <Compile Include="Mono\NextPrimeFinder.cs" />

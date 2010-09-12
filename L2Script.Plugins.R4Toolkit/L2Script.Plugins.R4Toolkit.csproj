@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{91962E2D-1466-4EBC-8534-5316F77DE1EA}</ProjectGuid>
+    <ProjectGuid>{B2ABFED7-526F-4C8B-952D-54DB9C6245DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>L2Script.Plugins</RootNamespace>
-    <AssemblyName>L2Script.Plugins</AssemblyName>
+    <RootNamespace>L2Script.Plugins.R4Toolkit</RootNamespace>
+    <AssemblyName>L2Script.Plugins.R4Toolkit</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,11 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands.cs" />
-    <Compile Include="Manager.cs" />
-    <Compile Include="Plugin.cs" />
-    <Compile Include="PluginInfo.cs" />
+    <Compile Include="InformationExtension\InformationExtension.cs" />
+    <Compile Include="InformationExtension\Packets\CharInfo.cs" />
+    <Compile Include="InformationExtension\Packets\NPCInfo.cs" />
+    <Compile Include="InformationExtension\Packets\UserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="R4000.cs" />
+    <Compile Include="Scripting\Events.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\L2Script.Library\L2Script.Library.csproj">
@@ -55,7 +57,12 @@
       <Project>{DCB0623F-C680-4502-848B-5D564367EE94}</Project>
       <Name>L2Script.Packets</Name>
     </ProjectReference>
+    <ProjectReference Include="..\L2Script.Plugins\L2Script.Plugins.csproj">
+      <Project>{91962E2D-1466-4EBC-8534-5316F77DE1EA}</Project>
+      <Name>L2Script.Plugins</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

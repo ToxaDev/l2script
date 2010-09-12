@@ -15,6 +15,7 @@ namespace L2Script
         public Config UserConfig;
         public GameData gameData = new GameData();
         public GameServer[] Servers;
+        public ExtensionHandler Extensions = new ExtensionHandler();
         int selectedServer = -1;
 
         public LoginServer(string configFile)
@@ -25,6 +26,36 @@ namespace L2Script
             Debug.Information("Loading plugins...");
             Plugins = Manager.GetPlugins(this.GetType().Assembly);
             Debug.Information("Sucessfully loaded " + Plugins.Length.ToString() + " plugins.");
+
+            Debug.Information("Loading Extensions from plugins...");
+            int largeCount = 0;
+            for (int i = 0; i < Plugins.Length; i++)
+            {
+                PluginInfo pi = Plugins[i].GetInfo();
+                int count = 0;
+                try
+                {
+                    Extension[] ext = Plugins[i].GetExtensions();
+
+                    for (int x = 0; x < ext.Length; x++)
+                    {
+                        if (ext[x].ShortName == "Events" && Plugins[i].GetInfo().Author == "Peter Corcoran (R4000)")
+                            for (int z = 0; z < Plugins.Length; z++)
+                                Plugins[z].RegisterEvents(ext[x].Resource);
+                        Extensions.Add(ext[x]);
+                    }
+
+                    count = ext.Length;
+                    largeCount += count;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Exception(" - Error loading extensions from '" + pi.ShortName + "'.", ex);
+                    continue;
+                }
+                Debug.Information(" - Loaded " + count + " extensions from '" + pi.ShortName + "'.");
+            }
+            Debug.Information("Loaded " + largeCount + " extensions from all plugins.");
 
             Debug.Information("Connecting to login server...");
             try
@@ -37,6 +68,8 @@ namespace L2Script
                 return;
             }
             Debug.Information("Connected to login server.");
+
+            gameData.commands = new Commands(gameData);
         }
 
         public override void DataReceived(ref byte[] inputPacket)
@@ -211,7 +244,7 @@ namespace L2Script
                         packet.readB(); // Unknown byte
                         for (int i = 0; i < serv_num; i++)
                         {
-                            GameServer server = new GameServer(ref UserConfig, ref gameData, ref Plugins);
+                            GameServer server = new GameServer(ref UserConfig, ref gameData, ref Plugins, ref Extensions);
                             server.ID = packet.packetBuffer.ReadByte();
                             server.IP = new IPAddress(BitConverter.GetBytes(packet.packetBuffer.ReadInt32()));
                             server.Port = packet.packetBuffer.ReadInt32();

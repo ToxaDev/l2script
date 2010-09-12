@@ -44,22 +44,31 @@ namespace L2Script.Packets
             return packetBuffer.ReadDouble();
         }
 
-        public string ReadS()
+        public string readS()
         {
             StringBuilder sb = new StringBuilder();
             byte currentChar;
-            byte nextChar;
-            do
+            byte lastChar = 0xFF;
+            bool stop = false;
+            while (stop == false)
             {
                 currentChar = packetBuffer.ReadByte();
 
                 if (currentChar != 0x00)
                     sb.Append((char)currentChar);
 
-                nextChar = (byte)packetBuffer.PeekChar();
-            } while (nextChar != 0x00 || currentChar != 0x00);
-            packetBuffer.ReadByte();
-            packetBuffer.ReadByte();
+                if (currentChar == 0x00 && lastChar == 0x00)
+                    stop = true;
+                else
+                    lastChar = currentChar;
+            }
+            try
+            {
+                packetBuffer.ReadByte();
+            }
+            catch (Exception) { }
+            if (sb.ToString() == "Reporter")
+                currentChar = 0x00;
             return sb.ToString();
         }
     }
