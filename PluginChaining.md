@@ -1,0 +1,4 @@
+A plugin can do anything it wants when the packet handler is closed.
+The variable 'Handled' relates to if anything up the plugin chain (you might not be the first to be called!) has handled this packet, if set to 'true' then something has handled it and would like it to be known, if 'Handled' is true, then try to only perform 'passive' actions. The return value from the HandlePacket() method should be true or false. True if you have performed an action based upon the packet, and false if you havn't. If you perform a passive action (e.g. statistic software, reading mp value for auto-mp) then you should return false, but if you perform an active action (e.g. reply to trade invite, reply to party invite etc.) then you should return true.
+
+Quite simple.
